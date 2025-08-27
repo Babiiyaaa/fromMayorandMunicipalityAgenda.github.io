@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ฟอร์มจอง</title>
+  <style>
+    body { background:#fef9f4; font-family:"Segoe UI",sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+    .container { background:#fff; padding:2rem; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:350px; }
+    input,select,textarea { width:100%; margin:.5rem 0; padding:.6rem; border:1px solid #ddd; border-radius:6px; }
+    button { width:100%; padding:.7rem; margin-top:1rem; background:#a7c4bc; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+    button:hover { background:#88ada6; }
+    .note { color:red; font-size:.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>จองห้องประชุม / ยานพาหนะ</h2>
+    <form id="bookingForm">
+      <input name="name" placeholder="ชื่อผู้จอง" required />
+      <select name="type" required>
+        <option value="ห้องประชุม">ห้องประชุมข้อมูลข่าวสารสนเทศ</option>
+        <option value="ห้องประชุม">ห้องประชุมมมณีจันทรา</option>
+        <option value="ห้องประชุม">ห้องประชุมชั้น 3</option>
+        <option value="ยานพาหนะ">ยานพาหนะ</option>
+        <option value="วาระนายก">วาระนายก</option>
+        <option value="วาระปลัด">วาระปลัด</option>
+      </select>
+      <input type="date" name="date" required />
+      <input type="time" name="time" required />
+      <input type="time" name="end_time" required />
+      <textarea name="purpose" placeholder="วัตถุประสงค์" required></textarea>
+      <input name="equipment" placeholder="อุปกรณ์ที่ต้องการ (เช่น โปรเจ็กเตอร์ ไมโครโฟน)" />
+      <p class="note">* หากต้องการช่างภาพ กรุณาระบุในวัตถุประสงค์</p>
+      <button type="submit">ส่งคำขอ</button>
+      <br><button onclick="window.location.href='index.html'"> ออกจากระบบ </button>
+    </form>
+  </div>
+  <script>
+    document.getElementById("bookingForm").onsubmit = async e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      const res = await fetch("/book",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+      alert(await res.text());
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "22": "^0.0.0",
+    "body-parser": "^2.2.0",
+    "cloudflare": "^4.5.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.14.3",
+    "path": "^0.12.7",
+    "pdfkit": "^0.17.1"
+  }
+}

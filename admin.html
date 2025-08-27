@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>หน้าผู้ดูแลระบบ</title>
+  <style>
+    body { background:#fef9f4; font-family:"Segoe UI"; padding:20px; }
+    h2 { text-align:center; color:#5a4636; }
+    table { width:100%; border-collapse:collapse; margin-top:20px; }
+    th,td { border:1px solid #ddd; padding:8px; text-align:center; }
+    th { background:#a7c4bc; color:#fff; }
+    tr:nth-child(even) { background:#f9f5f0; }
+    button { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; margin:2px; }
+    .approve { background:#6fbf73; color:#fff; }
+    .reject { background:#e57373; color:#fff; }
+    .detail { background:#88ada6; color:#fff; }
+    .calendar-btn { background:#88ada6; color:#fff; padding:8px 16px; border:none; border-radius:8px; cursor:pointer; margin-bottom:10px; }
+
+    /* Modal */
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.4); }
+    .modal-content { background:#fffaf5; margin:10% auto; padding:20px; border-radius:10px; width:350px; box-shadow:0 6px 12px rgba(0,0,0,0.2); position:relative; }
+    .close { position:absolute; right:10px; top:10px; cursor:pointer; font-size:18px; }
+    .close:hover { color:red; }
+  </style>
+</head>
+<body>
+  <h2>📋 รายการจองทั้งหมด</h2>
+  <div style="text-align:center;">
+  </div>
+  <table id="bookingTable">
+    <thead>
+      <tr>
+        <th>ชื่อผู้จอง</th>
+        <th>ประเภท</th>
+        <th>วันที่</th>
+        <th>เวลา</th>
+        <th>สถานะ</th>
+        <th>การจัดการ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Modal -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h3>รายละเอียดการจอง</h3>
+      <p><strong>ชื่อผู้จอง:</strong> <span id="mName"></span></p>
+      <p><strong>ประเภท:</strong> <span id="mType"></span></p>
+      <p><strong>วันที่:</strong> <span id="mDate"></span></p>
+      <p><strong>เวลา:</strong> <span id="mTime"></span></p>
+      <p><strong>วัตถุประสงค์:</strong> <span id="mPurpose"></span></p>
+      <p><strong>อุปกรณ์:</strong> <span id="mEquip"></span></p>
+    </div>
+  </div>
+
+<script>
+  let bookingsData = [];
+
+  async function loadBookings() {
+    const res = await fetch("/bookings");
+    bookingsData = await res.json();
+    const tbody = document.querySelector("#bookingTable tbody");
+    tbody.innerHTML = "";
+
+    bookingsData.forEach((b, idx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${b.name}</td>
+        <td>${b.type}</td>
+        <td>${b.date}</td>
+        <td>${b.time} - ${b.end_time}</td>
+        <td>${b.status}</td>
+        <td>
+          <button class="detail" onclick="showDetail(${idx})">ดูรายละเอียด</button>
+          <button class="approve" onclick="updateStatus(${b.id}, 'approve')">อนุมัติ</button>
+          <button class="reject" onclick="updateStatus(${b.id}, 'reject')">ปฏิเสธ</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showDetail(index) {
+    const b = bookingsData[index];
+    document.getElementById("mName").innerText = b.name;
+    document.getElementById("mType").innerText = b.type;
+    document.getElementById("mDate").innerText = b.date;
+    document.getElementById("mTime").innerText = b.time + " - " + b.end_time;
+    document.getElementById("mPurpose").innerText = b.purpose;
+    document.getElementById("mEquip").innerText = b.equipment || "-";
+    document.getElementById("detailModal").style.display = "block";
+  }
+
+  document.getElementById("closeModal").onclick = () => {
+    document.getElementById("detailModal").style.display = "none";
+  };
+
+  async function updateStatus(id, action) {
+    const res = await fetch(`/${action}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id })
+    });
+    const msg = await res.text();
+    alert(msg);
+    await loadBookings(); // โหลดข้อมูลใหม่
+  }
+
+  loadBookings();
+</script>
+<br><button onclick="window.location.href='register.html'"> ออกจากระบบ </button>
+</body>
+</html>
