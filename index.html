@@ -24,13 +24,14 @@
     </form>
   </div>
   <script>
-    document.getElementById("registerForm").onsubmit = async e => {
+    document.getElementById("indexForm").onsubmit = async e => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target));
-      const res = await fetch("/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+      const res = await fetch("/index",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
       const result = await res.json();
       if(result.success) location.href=result.redirect; else alert(result.message||"สมัครไม่สำเร็จ");
     }
   </script>
 </body>
 </html>
+
